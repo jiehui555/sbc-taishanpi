@@ -1,0 +1,54 @@
+name: Build Kernel and U-Boot
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+
+  build_u_boot:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+
+      - name: Build U-Boot
+        run: ./compile.sh u-boot
+
+      - name: Show U-Boot output
+        run: tree output
+
+      - name: Upload U-Boot build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: u-boot-output
+          path: |
+            output/u-boot/
+            build/logs/
+          retention-days: 7
+
+  build_kernel:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+
+      - name: Build Kernel
+        run: ./compile.sh kernel
+
+      - name: Show Kernel output
+        run: tree output
+
+      - name: Upload Kernel build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-output
+          path: |
+            output/kernel/
+            build/logs/
+          retention-days: 7
